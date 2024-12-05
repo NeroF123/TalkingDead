@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TalkinDead.Animation;
+using TalkinDead.Input;
 using TalkinDead.Interfaces;
 
 namespace TalkinDead
@@ -15,15 +17,15 @@ namespace TalkinDead
 
         Texture2D heroTexture;
         Animatie animatie;
-        private double secondCounter = 0;
-        private Vector2 positie = new Vector2(100, 50);
-        private Vector2 snelheid = new Vector2(1, 1);
+        private Vector2 positie;
+        private Vector2 snelheid;
+        IInputReader inputReader;
 
 
-        
 
 
-        public Hero(Texture2D texture) 
+
+        public Hero(Texture2D texture, IInputReader reader) 
         {
 
             heroTexture = texture;
@@ -38,13 +40,23 @@ namespace TalkinDead
             animatie.AddFrame(new AnimationFrame(new Rectangle(128, 32, 32, 32)));
             animatie.AddFrame(new AnimationFrame(new Rectangle(160, 32, 32, 32)));
             animatie.AddFrame(new AnimationFrame(new Rectangle(192, 32, 32, 32)));
-            animatie.AddFrame(new AnimationFrame(new Rectangle(224, 32, 32, 32))); 
+            animatie.AddFrame(new AnimationFrame(new Rectangle(224, 32, 32, 32)));
+
+            positie = new Vector2(100, 50);
+            snelheid = new Vector2(1, 1);
+
+
+            // Read input for hero class
+            this.inputReader = reader;
+
         }
 
         public void update(GameTime gameTime) 
         {
-            animatie.Update(gameTime);
+
             Move();
+            animatie.Update(gameTime);
+            
         }
 
         public void draw(SpriteBatch spriteBatch)
@@ -56,17 +68,10 @@ namespace TalkinDead
 
         private void Move()
         {
-            positie += snelheid;
-            if (positie.X > 800 - 32
-                || positie.X < 0)
-            {
-                snelheid.X *= -1;
-            }
-            if (positie.Y > 480 - 32
-                || positie.Y < 0)
-            {
-                snelheid.Y *= -1;
-            }
+            var direction = inputReader.ReadInput();
+            direction *= snelheid;
+            positie += direction;
+
 
         }
 

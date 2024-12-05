@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using TalkinDead.Input;
 
 namespace TalkinDead
 {
@@ -45,7 +46,7 @@ namespace TalkinDead
 
         private void InitializeGameObject()
         {
-            hero = new Hero(texture);
+            hero = new Hero(texture, new KeyBoardReader());
         }
 
         protected override void Update(GameTime gameTime)
