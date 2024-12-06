@@ -42,7 +42,7 @@ namespace TalkinDead
             animatie.AddFrame(new AnimationFrame(new Rectangle(192, 32, 32, 32)));
             animatie.AddFrame(new AnimationFrame(new Rectangle(224, 32, 32, 32)));
 
-            positie = new Vector2(100, 50);
+            positie = new Vector2(250, 250);
             snelheid = new Vector2(1, 1);
 
 
@@ -63,7 +63,7 @@ namespace TalkinDead
         {
 
             
-            spriteBatch.Draw(heroTexture, positie, animatie.CurrentFrame.SourceRectangle , Color.White);
+            spriteBatch.Draw(heroTexture, positie, animatie.CurrentFrame.SourceRectangle , Color.White, 0f, Vector2.Zero, 2.0f, SpriteEffects.None, 0f);
         }
 
         private void Move()
