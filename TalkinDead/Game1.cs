@@ -27,7 +27,7 @@ namespace TalkinDead
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _graphics.IsFullScreen = true;
+            _graphics.IsFullScreen = false;
             _graphics.PreferredBackBufferWidth = 960;
             _graphics.PreferredBackBufferHeight = 640;
             _graphics.ApplyChanges();

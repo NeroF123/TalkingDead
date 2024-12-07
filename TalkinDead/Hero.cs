@@ -21,7 +21,7 @@ namespace TalkinDead
         private Vector2 snelheid;
         IInputReader inputReader;
 
-
+        private bool isFacingRight = true;
 
 
 
@@ -61,14 +61,23 @@ namespace TalkinDead
 
         public void draw(SpriteBatch spriteBatch)
         {
+            //System.Diagnostics.Debug.WriteLine($"Facing Right: {isFacingRight}");
 
-            
-            spriteBatch.Draw(heroTexture, positie, animatie.CurrentFrame.SourceRectangle , Color.White, 0f, Vector2.Zero, 2.0f, SpriteEffects.None, 0f);
+            SpriteEffects spriteEffect = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            spriteBatch.Draw(heroTexture, positie, animatie.CurrentFrame.SourceRectangle , Color.White, 0f, Vector2.Zero, 2.0f, spriteEffect, 0f);
         }
 
         private void Move()
         {
             var direction = inputReader.ReadInput();
+
+            //System.Diagnostics.Debug.WriteLine($"Direction: {direction}"); 
+
+            if (direction.X > 0)
+                isFacingRight = true;
+            else if (direction.X < 0)
+                isFacingRight = false;
+
             direction *= snelheid;
             positie += direction;
 
