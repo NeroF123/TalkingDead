@@ -4,8 +4,10 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
 using System.Xml.Linq;
 using TalkinDead.Input;
+using TalkinDead.Levels;
 
 namespace TalkinDead
 {
@@ -15,15 +17,9 @@ namespace TalkinDead
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
         private Texture2D texture;
-        private Texture2D textureAtlas;
 
-        private Dictionary<Vector2, int> fgMap;
-        private Dictionary<Vector2, int> mgMap;
-        private Dictionary<Vector2, int> bgMap;
-        private List<Rectangle> TextureStore;
-
+        LevelMaker level1;
         Hero hero;
 
         public Game1()
@@ -35,16 +31,6 @@ namespace TalkinDead
             _graphics.PreferredBackBufferWidth = 960;
             _graphics.PreferredBackBufferHeight = 640;
             _graphics.ApplyChanges();
-
-
-
-            fgMap = LoadMap("../../../Levels/level1_fg.csv"); // Foreground layer
-            mgMap = LoadMap("../../../Levels/level1_mg.csv"); // Filepath to csv level1 Middle ground
-            bgMap = LoadMap("../../../Levels/level1_bg.csv"); // Background layer
-            TextureStore = new()
-            {
-            new Rectangle(0,0,32,32)
-            };
 
         }
 
@@ -59,8 +45,15 @@ namespace TalkinDead
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             // TODO: use this.Content to load your game content here
             texture = Content.Load<Texture2D>("Ratfolk Mage Sprite Sheet");
-            textureAtlas = Content.Load<Texture2D>("Dungeon_Tileset");
             InitializeGameObject();
+            
+            level1 = new LevelMaker(
+            "../../../Levels/level1_bg.csv",
+            "../../../Levels/level1_mg.csv",
+            "../../../Levels/level1_fg.csv",
+            Content.Load<Texture2D>("Dungeon_Tileset"),
+            32, 16, 32);
+
         }
 
         private void InitializeGameObject()
@@ -82,83 +75,14 @@ namespace TalkinDead
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            // TODO: Add your drawing code here
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            int dTilesize = 32; // Display tilesize
-            int tilesRow = 16;
-            int tilesPixelSize = 32;
-
-            foreach (var item in bgMap)
-            {
-                Rectangle drect = new((int)item.Key.X * dTilesize, (int)item.Key.Y * dTilesize, dTilesize, dTilesize);
-
-                int x = item.Value % tilesRow;
-                int y = item.Value / tilesRow;
-
-                Rectangle src = new(x * tilesPixelSize, y * tilesPixelSize, tilesPixelSize, tilesPixelSize);
-                _spriteBatch.Draw(textureAtlas, drect, src, Color.White);
-            }
-
-            foreach (var item in mgMap)
-            {
-                Rectangle drect = new((int)item.Key.X * dTilesize, (int)item.Key.Y * dTilesize, dTilesize, dTilesize);
-
-                int x = item.Value % tilesRow;
-                int y = item.Value / tilesRow;
-
-                Rectangle src = new(x * tilesPixelSize, y * tilesPixelSize, tilesPixelSize, tilesPixelSize);
-                _spriteBatch.Draw(textureAtlas, drect, src, Color.White);
-            }
-
-            foreach (var item in fgMap)
-            {
-                Rectangle drect = new((int)item.Key.X * dTilesize, (int)item.Key.Y * dTilesize, dTilesize, dTilesize);
-
-                int x = item.Value % tilesRow;
-                int y = item.Value / tilesRow;   
-
-                Rectangle src = new(x * tilesPixelSize, y * tilesPixelSize, tilesPixelSize, tilesPixelSize);
-                _spriteBatch.Draw(textureAtlas, drect, src, Color.White);
-            }
-
+            level1.Draw(_spriteBatch);
             hero.draw(_spriteBatch);
 
             _spriteBatch.End();   
             base.Draw(gameTime);    
         }
-
-        private Dictionary<Vector2, int> LoadMap(string filepath)
-        {
-            
-            Dictionary<Vector2, int> result = new() ;
-            StreamReader reader = new(filepath);
-
-            int y = 0;
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] items = line.Split(",");
-
-                for (int x = 0; x < items.Length; x++)
-                {
-                    if (int.TryParse(items[x], out int value)) { 
-                        if (value > -1) {
-                            result[new Vector2(x, y)] = value;
-                        }
-                    }
-
-                }
-
-                y++;
-
-            }
-
-            return result ; 
-
-        }
-
-
 
     }
 }
